@@ -9,8 +9,8 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/VikasKumar1187/publisher_saas/services/publisher/pkg/logger"
 	"github.com/ardanlabs/conf/v3"
-	"github.com/yourusername/saas-project/services/publisher/pkg/logger"
 	"go.uber.org/zap"
 )
 
@@ -100,22 +100,22 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 
 	log.Info(ctx, "startup", "status", "initializing database support", "host", cfg.DB.Host)
 
-	db, err := db.Open(db.Config{
-		User:         cfg.DB.User,
-		Password:     cfg.DB.Password,
-		Host:         cfg.DB.Host,
-		Name:         cfg.DB.Name,
-		MaxIdleConns: cfg.DB.MaxIdleConns,
-		MaxOpenConns: cfg.DB.MaxOpenConns,
-		DisableTLS:   cfg.DB.DisableTLS,
-	})
-	if err != nil {
-		return fmt.Errorf("connecting to db: %w", err)
-	}
-	defer func() {
-		log.Info(ctx, "shutdown", "status", "stopping database support", "host", cfg.DB.Host)
-		db.Close()
-	}()
+	// db, err := db.Open(db.Config{
+	// 	User:         cfg.DB.User,
+	// 	Password:     cfg.DB.Password,
+	// 	Host:         cfg.DB.Host,
+	// 	Name:         cfg.DB.Name,
+	// 	MaxIdleConns: cfg.DB.MaxIdleConns,
+	// 	MaxOpenConns: cfg.DB.MaxOpenConns,
+	// 	DisableTLS:   cfg.DB.DisableTLS,
+	// })
+	// if err != nil {
+	// 	return fmt.Errorf("connecting to db: %w", err)
+	// }
+	// defer func() {
+	// 	log.Info(ctx, "shutdown", "status", "stopping database support", "host", cfg.DB.Host)
+	// 	db.Close()
+	// }()
 
 	return nil
 

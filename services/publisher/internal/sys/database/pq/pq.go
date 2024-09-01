@@ -12,7 +12,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
-	"github.com/yourusername/saas-project/services/publisher/pkg/web"
+	"github.com/vikaskumar1187/saas-project/services/publisher/pkg/web"
 	"go.opentelemetry.io/otel/attribute"
 	"go.uber.org/zap"
 )

@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"net/http/pprof"
 
-	"github.com/ardanlabs/service/business/web/v1/debug/checkgrp"
 	"github.com/jmoiron/sqlx"
+	"github.com/vikaskumar1187/publisher_saas/services/publisher/internal/web/v1/debug/checkgrp"
 	"go.uber.org/zap"
 )
 

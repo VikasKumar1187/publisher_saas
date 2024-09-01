@@ -9,8 +9,8 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/VikasKumar1187/publisher_saas/services/publisher/pkg/logger"
 	"github.com/ardanlabs/conf/v3"
+	"github.com/vikaskumar1187/publisher_saas/services/publisher/pkg/logger"
 	"go.uber.org/zap"
 )
 

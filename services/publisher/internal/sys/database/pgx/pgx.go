@@ -13,7 +13,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
-	"github.com/vikaskumar1187/publisher-saas/services/publisher/pkg/web"
+	"github.com/vikaskumar1187/publisher_saas/services/publisher/pkg/web"
 	"go.opentelemetry.io/otel/attribute"
 	"go.uber.org/zap"
 )

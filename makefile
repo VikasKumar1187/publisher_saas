@@ -98,7 +98,7 @@ all: service
 
 service:
 	docker build \
-    -f zarf/docker/dockerfile.service \
+    -f infra/docker/dockerfile.service \
     -t $(SERVICE_IMAGE) \
     --build-arg BUILD_REF=$(VERSION) \
     --build-arg BUILD_DATE="$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")" \
@@ -111,7 +111,7 @@ dev-up:
 	kind create cluster \
 		--image $(KIND) \
 		--name $(KIND_CLUSTER) \
-		--config zarf/k8s/dev/kind-config.yaml
+		--config infra/k8s/dev/kind-config.yaml
 
 	kubectl wait --timeout=120s --namespace=local-path-storage --for=condition=Available deployment/local-path-provisioner
 
@@ -124,10 +124,10 @@ dev-load:
 	kind load docker-image $(SERVICE_IMAGE) --name $(KIND_CLUSTER)
 
 dev-apply:
-	kustomize build zarf/k8s/dev/database | kubectl apply -f -
+	kustomize build infra/k8s/dev/database | kubectl apply -f -
 	kubectl rollout status --namespace=$(NAMESPACE) --watch --timeout=120s sts/database
 
-	kustomize build zarf/k8s/dev/publisher | kubectl apply -f -
+	kustomize build infra/k8s/dev/publisher | kubectl apply -f -
 	kubectl wait pods --namespace=$(NAMESPACE) --selector app=$(APP) --timeout=120s --for=condition=Ready
 
 dev-restart:
@@ -170,7 +170,7 @@ metrics-view:
 	expvarmon -ports="localhost:4000" -vars="build,requests,goroutines,errors,panics,mem:memstats.Alloc"
 
 load-test:
-	hey -m GET -c 100 -n 100000 "http://localhost:3000/v1/hack"
+	hey -m GET -c 100 -n 100000 "http://localhost:3000/v1/test"
 
 # ==============================================================================
 # Curl commands for testing
@@ -188,7 +188,7 @@ curl-auth:
 	curl -il -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/v1/testauth
 
 curl:
-	curl -il http://localhost:3000/v1/hack
+	curl -il http://localhost:3000/v1/test
 
 # ==============================================================================
 # Modules support

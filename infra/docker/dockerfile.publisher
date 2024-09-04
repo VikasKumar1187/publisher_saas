@@ -1,0 +1,47 @@
+# Build the Go Binary.
+FROM golang:1.21.5 as build_publisher-api
+ENV CGO_ENABLED 0
+ARG BUILD_REF
+
+# Create the service directory and the copy the module files first and then
+# download the dependencies. If this doesn't change, we won't need to do this
+# again in future builds.
+# RUN mkdir /service
+# COPY go.* /service/
+# WORKDIR /service
+# RUN go mod download
+
+# Copy the source code into the container.
+COPY . /service
+
+# Debugging step to inspect the contents of the directory
+RUN ls -la /service/
+
+# Build the admin binary.
+WORKDIR /service/app/tooling/publisher-admin
+RUN go build -ldflags "-X main.build=${BUILD_REF}"
+
+# Build the service binary.
+WORKDIR /service/app/services/publisher-api
+RUN go build -ldflags "-X main.build=${BUILD_REF}"
+
+
+# Run the Go Binary in Alpine.
+FROM alpine:3.19
+ARG BUILD_DATE
+ARG BUILD_REF
+RUN addgroup -g 1000 -S publisher && \
+    adduser -u 1000 -h /service -G publisher -S publisher
+COPY --from=build_publisher-api --chown=publisher:publisher /service/zarf/keys/. /service/zarf/keys/.
+COPY --from=build_publisher-api --chown=publisher:publisher /service/app/tooling/publisher-admin/publisher-admin /service/publisher-admin
+COPY --from=build_publisher-api --chown=publisher:publisher /service/app/services/publisher-api/publisher-api /service/publisher-api
+WORKDIR /service
+USER publisher
+CMD ["./publisher-api"]
+
+LABEL org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.title="publisher-api" \
+    org.opencontainers.image.authors="Vikas Kumar" \
+    org.opencontainers.image.source="https://github.com/VikasKumar1187/print_auto_service/tree/master/app/services/publisher-api" \
+    org.opencontainers.image.revision="${BUILD_REF}" \
+    org.opencontainers.image.vendor="Self"

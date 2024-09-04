@@ -1,0 +1,9 @@
+
+.git/
+.reading/
+.dockerignore
+.gitignore
+infra/docker/
+infra/k8s/
+makefile
+README.md

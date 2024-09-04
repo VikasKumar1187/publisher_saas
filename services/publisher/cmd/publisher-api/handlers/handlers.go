@@ -37,8 +37,17 @@ type APIMuxConfig struct {
 	Tracer   trace.Tracer
 }
 
-// APIMux constructs a http.Handler with all application routes defined.
+// APIMux constructs an http.Handler with all application routes defined.
+// It takes a configuration (APIMuxConfig) and optional functional options.
+//
+// Parameters:
+// - cfg: APIMuxConfig containing all mandatory systems required by handlers.
+// - options: Variadic functional options for additional configurations.
+//
+// Returns:
+// - http.Handler: The constructed handler with all routes defined.
 func APIMux(cfg APIMuxConfig, options ...func(opts *Options)) http.Handler {
+
 	var opts Options
 	for _, option := range options {
 		option(&opts)
@@ -73,6 +82,11 @@ func APIMux(cfg APIMuxConfig, options ...func(opts *Options)) http.Handler {
 			mid.Panics(),
 		)
 	}
+
+	// Define the routes for the application
+	// This is where we set up all the handlers for different API endpoints
+	// The v1.Routes function is called to set up the version 1 API routes
+	// It takes the web.App instance and a configuration struct as parameters
 
 	v1.Routes(app, v1.Config{
 		Build: cfg.Build,

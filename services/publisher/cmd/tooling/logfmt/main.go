@@ -1,4 +1,3 @@
-// This program takes the structured log output and makes it readable.
 package main
 
 import (
@@ -27,7 +26,7 @@ func main() {
 	for scanner.Scan() {
 		s := scanner.Text()
 
-		m := make(map[string]any)
+		m := make(map[string]interface{})
 		err := json.Unmarshal([]byte(s), &m)
 		if err != nil {
 			if service == "" {
@@ -47,8 +46,7 @@ func main() {
 			traceID = fmt.Sprintf("%v", v)
 		}
 
-		// Build out the know portions of the log in the order
-		// I want them in.
+		// Build out the known portions of the log in the order I want them in.
 		b.Reset()
 		b.WriteString(fmt.Sprintf("%s: %s: %s: %s: %s: %s: ",
 			m["service"],
@@ -59,20 +57,28 @@ func main() {
 			m["msg"],
 		))
 
-		// Add the rest of the keys ignoring the ones we already
-		// added for the log.
+		// Add specific fields in the order you want them to appear.
+		if method, ok := m["method"]; ok {
+			b.WriteString(fmt.Sprintf("method[%v]: ", method))
+		}
+		if path, ok := m["path"]; ok {
+			b.WriteString(fmt.Sprintf("path[%v]: ", path))
+		}
+		if remoteAddr, ok := m["remoteaddr"]; ok {
+			b.WriteString(fmt.Sprintf("remoteaddr[%v]: ", remoteAddr))
+		}
+
+		// Add the rest of the keys, ignoring the ones already added.
 		for k, v := range m {
 			switch k {
-			case "service", "ts", "level", "trace_id", "caller", "msg":
+			case "service", "ts", "level", "trace_id", "caller", "msg", "method", "path", "remoteaddr":
 				continue
 			}
-
-			// It's nice to see the key[value] in this format
-			// especially since map ordering is random.
+			// It's nice to see the key[value] in this format.
 			b.WriteString(fmt.Sprintf("%s[%v]: ", k, v))
 		}
 
-		// Write the new log format, removing the last :
+		// Write the new log format, removing the last colon.
 		out := b.String()
 		fmt.Println(out[:len(out)-2])
 	}

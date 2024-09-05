@@ -8,6 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/vikaskumar1187/publisher_saas/services/publisher/internal/web/auth"
 	"github.com/vikaskumar1187/publisher_saas/services/publisher/internal/web/v1/debug/checkgrp"
+	"github.com/vikaskumar1187/publisher_saas/services/publisher/internal/web/v1/mid"
 	"github.com/vikaskumar1187/publisher_saas/services/publisher/pkg/web"
 	"go.uber.org/zap"
 )
@@ -31,5 +32,6 @@ func Routes(app *web.App, cfg Config) {
 	app.Handle(http.MethodGet, version, "/readiness", cgh.Readiness)
 	app.Handle(http.MethodGet, version, "/liveness", cgh.Liveness)
 	app.Handle(http.MethodGet, version, "/test", cgh.Test)
+	app.Handle(http.MethodGet, version, "/test-auth", cgh.TestAuth, mid.Authenticate(cfg.Auth))
 
 }

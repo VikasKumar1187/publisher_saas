@@ -53,6 +53,11 @@ func (h Handlers) TestAuth(ctx context.Context, w http.ResponseWriter, r *http.R
 	return web.Respond(ctx, w, data, statusCode)
 }
 
+// Added this new handler function
+func (h *Handlers) HandleNotFound(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	return web.Respond(ctx, w, "route not found", http.StatusNotFound)
+}
+
 // Readiness checks if the database is ready and if not will return a 500 status.
 // Do not respond by just returning an error because further up in the call
 // stack it will interpret that as a non-trusted error.

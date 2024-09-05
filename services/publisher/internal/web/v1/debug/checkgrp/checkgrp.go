@@ -53,7 +53,7 @@ func (h Handlers) TestAuth(ctx context.Context, w http.ResponseWriter, r *http.R
 	return web.Respond(ctx, w, data, statusCode)
 }
 
-// Added this new handler function
+// HandleNotFound handles requests for unknown routes
 func (h *Handlers) HandleNotFound(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	return web.Respond(ctx, w, "route not found", http.StatusNotFound)
 }

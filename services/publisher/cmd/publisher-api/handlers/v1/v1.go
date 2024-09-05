@@ -33,7 +33,5 @@ func Routes(app *web.App, cfg Config) {
 	app.Handle(http.MethodGet, version, "/liveness", cgh.Liveness)
 	app.Handle(http.MethodGet, version, "/test", cgh.Test)
 	app.Handle(http.MethodGet, version, "/test-auth", cgh.TestAuth, mid.Authenticate(cfg.Auth))
-
-	// Add this catch-all route at the end
 	app.Handle("*", version, "/*", cgh.HandleNotFound)
 }

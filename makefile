@@ -12,7 +12,7 @@ SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 # ==============================================================================
 # Define dependencies
 
-GOLANG          := golang:1.21.5
+GOLANG          := golang:1.23.0
 ALPINE          := alpine:3.19
 KIND            := kindest/node:v1.29.0
 POSTGRES        := postgres:16.1
@@ -21,11 +21,12 @@ PROMETHEUS      := prom/prometheus:v2.48.0
 TEMPO           := grafana/tempo:2.3.0
 LOKI            := grafana/loki:2.9.0
 PROMTAIL        := grafana/promtail:2.9.0
+ZIPKIN          := openzipkin/zipkin:2.24
 
-KIND_CLUSTER    := publishing-cluster
-NAMESPACE       := publishing-system
+KIND_CLUSTER    := publisher-cluster
+NAMESPACE       := publisher-system
 APP             := publisher
-BASE_IMAGE_NAME := publishing/service
+BASE_IMAGE_NAME := publisher/service
 SERVICE_NAME    := publisher-api
 VERSION         := 0.0.1
 SERVICE_IMAGE   := $(BASE_IMAGE_NAME)/$(SERVICE_NAME):$(VERSION)
@@ -60,6 +61,7 @@ dev-docker:
 	docker pull $(TEMPO)
 	docker pull $(LOKI)
 	docker pull $(PROMTAIL)
+	docker pull $(ZIPKIN)
 
 
 # ==============================================================================

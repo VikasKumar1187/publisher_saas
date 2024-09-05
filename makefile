@@ -68,12 +68,13 @@ dev-docker:
 # Running the project locally
 
 run:
-	go run services/publisher/cmd/publisher-api/main.go | go run services/publisher/cmd/tooling/logfmt/main.go
+	cd services/publisher && go run cmd/publisher-api/main.go | go run cmd/tooling/logfmt/main.go
+
 
 run-help:
 	go run services/publisher/cmd/publisher-api/main.go --help | go run services/publisher/cmd/tooling/logfmt/main.go
 
- ==============================================================================
+# ==============================================================================
 # Testing and linting
 
 test-race:
@@ -93,7 +94,7 @@ test: test-only lint vuln-check
 
 test-race: test-race lint vuln-check
 
- ==============================================================================
+#==============================================================================
 # Building containers
 
 all: service
@@ -106,7 +107,7 @@ service:
     --build-arg BUILD_DATE="$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")" \
     .
 
-==============================================================================
+#==============================================================================
 # Running from within k8s/kind
 
 dev-up:

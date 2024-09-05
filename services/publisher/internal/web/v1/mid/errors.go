@@ -6,8 +6,9 @@ import (
 
 	"github.com/vikaskumar1187/publisher_saas/services/publisher/internal/sys/validate"
 	"github.com/vikaskumar1187/publisher_saas/services/publisher/internal/web/auth"
-	v1 "github.com/vikaskumar1187/publisher_saas/services/publisher/internal/web/v1"
+	"github.com/vikaskumar1187/publisher_saas/services/publisher/internal/web/v1/response"
 	"github.com/vikaskumar1187/publisher_saas/services/publisher/pkg/web"
+
 	"go.uber.org/zap"
 )
 
@@ -18,35 +19,42 @@ func Errors(log *zap.SugaredLogger) web.Middleware {
 	m := func(handler web.Handler) web.Handler {
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 			if err := handler(ctx, w, r); err != nil {
-				log.Errorw("ERROR", "trace_id", web.GetTraceID(ctx), "message", err)
+				log.Error(ctx, "message", "msg", err)
 
-				var er v1.ErrorResponse
+				ctx, span := web.AddSpan(ctx, "business.web.request.mid.error")
+				span.RecordError(err)
+				span.End()
+
+				var er response.ErrorDocument
 				var status int
 
 				switch {
-				case validate.IsFieldErrors(err):
-					fieldErrors := validate.GetFieldErrors(err)
-					er = v1.ErrorResponse{
-						Error:  "data validation error",
-						Fields: fieldErrors.Fields(),
-					}
-					status = http.StatusBadRequest
+				case response.IsError(err):
+					reqErr := response.GetError(err)
 
-				case v1.IsRequestError(err):
-					reqErr := v1.GetRequestError(err)
-					er = v1.ErrorResponse{
+					if validate.IsFieldErrors(reqErr.Err) {
+						fieldErrors := validate.GetFieldErrors(reqErr.Err)
+						er = response.ErrorDocument{
+							Error:  "data validation error",
+							Fields: fieldErrors.Fields(),
+						}
+						status = reqErr.Status
+						break
+					}
+
+					er = response.ErrorDocument{
 						Error: reqErr.Error(),
 					}
 					status = reqErr.Status
 
 				case auth.IsAuthError(err):
-					er = v1.ErrorResponse{
+					er = response.ErrorDocument{
 						Error: http.StatusText(http.StatusUnauthorized),
 					}
 					status = http.StatusUnauthorized
 
 				default:
-					er = v1.ErrorResponse{
+					er = response.ErrorDocument{
 						Error: http.StatusText(http.StatusInternalServerError),
 					}
 					status = http.StatusInternalServerError

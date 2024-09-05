@@ -6,7 +6,6 @@ import (
 
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-	"go.opentelemetry.io/otel/trace/noop"
 )
 
 type ctxKey int
@@ -21,13 +20,18 @@ type Values struct {
 	StatusCode int
 }
 
+// SetValues sets the specified Values in the context.
+func SetValues(ctx context.Context, v *Values) context.Context {
+	return context.WithValue(ctx, key, v)
+}
+
 // GetValues returns the values from the context.
 func GetValues(ctx context.Context) *Values {
 	v, ok := ctx.Value(key).(*Values)
 	if !ok {
 		return &Values{
 			TraceID: "00000000-0000-0000-0000-000000000000",
-			Tracer:  noop.NewTracerProvider().Tracer(""),
+			Tracer:  trace.NewNoopTracerProvider().Tracer(""),
 			Now:     time.Now(),
 		}
 	}

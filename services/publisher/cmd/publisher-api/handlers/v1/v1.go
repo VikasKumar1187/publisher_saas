@@ -33,5 +33,10 @@ func Routes(app *web.App, cfg Config) {
 	app.Handle(http.MethodGet, version, "/liveness", cgh.Liveness)
 	app.Handle(http.MethodGet, version, "/test", cgh.Test)
 	app.Handle(http.MethodGet, version, "/test-auth", cgh.TestAuth, mid.Authenticate(cfg.Auth))
-	app.Handle("*", version, "/*", cgh.HandleNotFound)
+
+	app.Handle(http.MethodGet, version, "/*", cgh.HandleNotFound)
+	app.Handle(http.MethodPost, version, "/*", cgh.HandleNotFound)
+	app.Handle(http.MethodPatch, version, "/*", cgh.HandleNotFound)
+	app.Handle(http.MethodPut, version, "/*", cgh.HandleNotFound)
+	app.Handle(http.MethodDelete, version, "/*", cgh.HandleNotFound)
 }

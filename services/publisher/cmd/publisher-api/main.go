@@ -18,7 +18,13 @@ import (
 	"github.com/vikaskumar1187/publisher_saas/services/publisher/internal/web/auth"
 	"github.com/vikaskumar1187/publisher_saas/services/publisher/internal/web/v1/debug"
 	"github.com/vikaskumar1187/publisher_saas/services/publisher/pkg/logger"
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/pkg/otel"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/sdk/resource"
+	"go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.uber.org/zap"
 )
 
@@ -80,12 +86,9 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 		}
 
 		Tempo struct {
-			Host        string  `conf:"default:tempo:4317"`
+			ReporterURI string  `conf:"default:tempo.publisher-system.svc.cluster.local:4317"`
 			ServiceName string  `conf:"default:publisher-api"`
-			Probability float64 `conf:"default:0.05"`
-			// Shouldn't use a high Probability value in non-developer systems.
-			// 0.05 should be enough for most systems. Some might want to have
-			// this even lower.
+			Probability float64 `conf:"default:1"` // Shouldn't use a high value in non-developer systems. 0.05 should be enough for most systems. Some might want to have this even lower
 		}
 	}{
 		Version: conf.Version{
@@ -160,24 +163,19 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 	// -------------------------------------------------------------------------
 	// Start Tracing Support
 
-	log.Infow("startup", "status", "initializing tracing support")
+	log.Info(ctx, "startup", "status", "initializing OT/Tempo tracing support")
 
-	traceProvider, err := otel.InitTracing(otel.Config{
-		ServiceName: cfg.Tempo.ServiceName,
-		Host:        cfg.Tempo.Host,
-		ExcludedRoutes: map[string]struct{}{
-			"/v1/liveness":  {},
-			"/v1/readiness": {},
-		},
-		Probability: cfg.Tempo.Probability,
-	})
+	traceProvider, err := startTracing(
+		cfg.Tempo.ServiceName,
+		cfg.Tempo.ReporterURI,
+		cfg.Tempo.Probability,
+	)
 	if err != nil {
 		return fmt.Errorf("starting tracing: %w", err)
 	}
-
 	defer traceProvider.Shutdown(context.Background())
 
-	tracer := traceProvider.Tracer(cfg.Tempo.ServiceName)
+	tracer := traceProvider.Tracer("service")
 
 	// -------------------------------------------------------------------------
 	// Start Debug Service
@@ -245,4 +243,54 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 
 	return nil
 
+}
+
+// =============================================================================
+
+// startTracing configure open telemetry to be used with Grafana Tempo.
+func startTracing(serviceName string, reporterURI string, probability float64) (*trace.TracerProvider, error) {
+
+	// WARNING: The current settings are using defaults which may not be
+	// compatible with your project. Please review the documentation for
+	// opentelemetry.
+
+	exporter, err := otlptrace.New(
+		context.Background(),
+		otlptracegrpc.NewClient(
+			otlptracegrpc.WithInsecure(), // This should be configurable
+			otlptracegrpc.WithEndpoint(reporterURI),
+		),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("creating new exporter: %w", err)
+	}
+
+	traceProvider := trace.NewTracerProvider(
+		trace.WithSampler(trace.TraceIDRatioBased(probability)),
+		trace.WithBatcher(exporter,
+			trace.WithMaxExportBatchSize(trace.DefaultMaxExportBatchSize),
+			trace.WithBatchTimeout(trace.DefaultScheduleDelay*time.Millisecond),
+			trace.WithMaxExportBatchSize(trace.DefaultMaxExportBatchSize),
+		),
+		trace.WithResource(
+			resource.NewWithAttributes(
+				semconv.SchemaURL,
+				semconv.ServiceNameKey.String(serviceName),
+			),
+		),
+	)
+
+	// We must set this provider as the global provider for things to work,
+	// but we pass this provider around the program where needed to collect
+	// our traces.
+	otel.SetTracerProvider(traceProvider)
+
+	// Chooses the HTTP header formats we extract incoming trace contexts from,
+	// and the headers we set in outgoing requests.
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
+		propagation.TraceContext{},
+		propagation.Baggage{},
+	))
+
+	return traceProvider, nil
 }

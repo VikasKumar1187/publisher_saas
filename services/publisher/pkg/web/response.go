@@ -8,26 +8,6 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 )
 
-// StatusRecorder wraps http.ResponseWriter to capture the status code and header writes
-type StatusRecorder struct {
-	http.ResponseWriter
-	Status       int
-	HeaderWrites int
-}
-
-func (r *StatusRecorder) WriteHeader(statusCode int) {
-	if r.Status != 0 {
-		return // Ignore subsequent calls to WriteHeader
-	}
-	r.Status = statusCode
-	r.ResponseWriter.WriteHeader(statusCode)
-}
-
-func (r *StatusRecorder) Header() http.Header {
-	r.HeaderWrites++
-	return r.ResponseWriter.Header()
-}
-
 // Respond converts a Go value to JSON and sends it to the client.
 func Respond(ctx context.Context, w http.ResponseWriter, data any, statusCode int) error {
 	ctx, span := AddSpan(ctx, "foundation.web.response", attribute.Int("status", statusCode))
@@ -35,10 +15,8 @@ func Respond(ctx context.Context, w http.ResponseWriter, data any, statusCode in
 
 	SetStatusCode(ctx, statusCode)
 
-	recorder := &StatusRecorder{ResponseWriter: w, Status: 0}
-
 	if statusCode == http.StatusNoContent {
-		recorder.WriteHeader(statusCode)
+		w.WriteHeader(statusCode)
 		return nil
 	}
 
@@ -47,10 +25,10 @@ func Respond(ctx context.Context, w http.ResponseWriter, data any, statusCode in
 		return err
 	}
 
-	recorder.Header().Set("Content-Type", "application/json")
-	recorder.WriteHeader(statusCode)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
 
-	if _, err := recorder.Write(jsonData); err != nil {
+	if _, err := w.Write(jsonData); err != nil {
 		return err
 	}
 

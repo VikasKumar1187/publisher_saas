@@ -114,14 +114,14 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 	if err != nil {
 		return fmt.Errorf("generating config for output: %w", err)
 	}
-	log.Info(ctx, "startup", "config", out)
+	log.Infow("startup", "config", out)
 
 	expvar.NewString("build").Set(build)
 
 	// -------------------------------------------------------------------------
 	// Database Support
 
-	log.Info("startup", "status", "initializing database support", "host", cfg.DB.Host)
+	log.Infow("startup", "status", "initializing database support", "host", cfg.DB.Host)
 
 	db, err := db.Open(db.Config{
 		User:         cfg.DB.User,
@@ -136,7 +136,7 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 		return fmt.Errorf("connecting to db: %w", err)
 	}
 	defer func() {
-		log.Info("shutdown", "status", "stopping database support", "host", cfg.DB.Host)
+		log.Infow("shutdown", "status", "stopping database support", "host", cfg.DB.Host)
 		db.Close()
 	}()
 

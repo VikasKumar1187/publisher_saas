@@ -107,7 +107,7 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 	// -------------------------------------------------------------------------
 	// App Starting
 
-	log.Info("starting service", "version", build)
+	log.Infow("starting service", "version", build)
 	defer log.Info("shutdown complete")
 
 	out, err := conf.String(&cfg)
@@ -160,7 +160,7 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 	// -------------------------------------------------------------------------
 	// Start Tracing Support
 
-	log.Info("startup", "status", "initializing tracing support")
+	log.Infow("startup", "status", "initializing tracing support")
 
 	traceProvider, err := otel.InitTracing(otel.Config{
 		ServiceName: cfg.Tempo.ServiceName,
@@ -193,7 +193,7 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 	// -------------------------------------------------------------------------
 	// Start API Service
 
-	log.Info("startup", "status", "initializing V1 API support")
+	log.Infow("startup", "status", "initializing V1 API support")
 
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)

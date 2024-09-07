@@ -107,8 +107,8 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 	// -------------------------------------------------------------------------
 	// App Starting
 
-	log.Info(ctx, "starting service", "version", build)
-	defer log.Info(ctx, "shutdown complete")
+	log.Info("starting service", "version", build)
+	defer log.Info("shutdown complete")
 
 	out, err := conf.String(&cfg)
 	if err != nil {
@@ -121,7 +121,7 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 	// -------------------------------------------------------------------------
 	// Database Support
 
-	log.Info(ctx, "startup", "status", "initializing database support", "host", cfg.DB.Host)
+	log.Info("startup", "status", "initializing database support", "host", cfg.DB.Host)
 
 	db, err := db.Open(db.Config{
 		User:         cfg.DB.User,
@@ -136,7 +136,7 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 		return fmt.Errorf("connecting to db: %w", err)
 	}
 	defer func() {
-		log.Info(ctx, "shutdown", "status", "stopping database support", "host", cfg.DB.Host)
+		log.Info("shutdown", "status", "stopping database support", "host", cfg.DB.Host)
 		db.Close()
 	}()
 
@@ -160,7 +160,7 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 	// -------------------------------------------------------------------------
 	// Start Tracing Support
 
-	log.Info(ctx, "startup", "status", "initializing tracing support")
+	log.Info("startup", "status", "initializing tracing support")
 
 	traceProvider, err := otel.InitTracing(otel.Config{
 		ServiceName: cfg.Tempo.ServiceName,
@@ -193,7 +193,7 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 	// -------------------------------------------------------------------------
 	// Start API Service
 
-	log.Infow("startup", "status", "initializing V1 API support")
+	log.Info("startup", "status", "initializing V1 API support")
 
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)

@@ -191,13 +191,15 @@ curl-liveness:
 curl-create-user:
 	curl -il -X POST -H 'Content-Type: application/json' -d '{"name":"bill","email":"b@gmail.com","roles":["ADMIN"],"department":"IT","password":"123","passwordConfirm":"123"}' http://localhost:3000/v1/users
 
-curl-unknown:
-	curl -il http://localhost:3000/v1/unknown
-curl-auth:
-	curl -il -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/v1/test-auth
 
 curl:
 	curl -il http://localhost:3000/v1/test
+
+curl-auth:
+	curl -il -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/v1/test-auth
+
+curl-unknown:
+	curl -il http://localhost:3000/v1/unknown
 
 # ==============================================================================
 # Modules support

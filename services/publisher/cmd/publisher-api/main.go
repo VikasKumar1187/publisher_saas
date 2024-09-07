@@ -160,9 +160,6 @@ func run(ctx context.Context, log *zap.SugaredLogger) error {
 	// -------------------------------------------------------------------------
 	// Start Tracing Support
 
-	// -------------------------------------------------------------------------
-	// Start Tracing Support
-
 	log.Info(ctx, "startup", "status", "initializing tracing support")
 
 	traceProvider, err := otel.InitTracing(otel.Config{

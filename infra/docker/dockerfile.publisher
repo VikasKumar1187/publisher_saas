@@ -12,7 +12,7 @@ ARG BUILD_REF
 # RUN go mod download
 
 # Copy the source code into the container.
-COPY . /service
+COPY . /publisher_saas
 
 # Debugging step to inspect the contents of the directory
 RUN ls -la /service/
@@ -32,8 +32,7 @@ ARG BUILD_DATE
 ARG BUILD_REF
 RUN addgroup -g 1000 -S publisher && \
     adduser -u 1000 -h /service -G publisher -S publisher
-COPY --from=build_publisher-api --chown=publisher:publisher /service/zarf/keys/. /service/zarf/keys/.
-COPY --from=build_publisher-api --chown=publisher:publisher /service/app/tooling/publisher-admin/publisher-admin /service/publisher-admin
+
 COPY --from=build_publisher-api --chown=publisher:publisher /service/app/services/publisher-api/publisher-api /service/publisher-api
 WORKDIR /service
 USER publisher

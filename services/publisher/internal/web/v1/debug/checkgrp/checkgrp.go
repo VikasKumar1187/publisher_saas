@@ -10,19 +10,22 @@ import (
 	"github.com/jmoiron/sqlx"
 	database "github.com/vikaskumar1187/publisher_saas/services/publisher/internal/sys/database/pgx"
 	"github.com/vikaskumar1187/publisher_saas/services/publisher/pkg/web"
+	"go.uber.org/zap"
 )
 
 // Handlers manages the set of check endpoints.
 type Handlers struct {
 	build string
 	db    *sqlx.DB
+	log   *zap.SugaredLogger
 }
 
 // New constructs a Handlers api for the check group.
-func New(build string, db *sqlx.DB) *Handlers {
+func New(build string, db *sqlx.DB, log *zap.SugaredLogger) *Handlers {
 	return &Handlers{
 		build: build,
 		db:    db,
+		log:   log,
 	}
 }
 
@@ -50,6 +53,7 @@ func (h Handlers) TestAuth(ctx context.Context, w http.ResponseWriter, r *http.R
 		Status: status,
 	}
 
+	
 	return web.Respond(ctx, w, data, statusCode)
 }
 

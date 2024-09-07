@@ -27,7 +27,7 @@ func Routes(app *web.App, cfg Config) {
 
 	// -------------------------------------------------------------------------
 
-	cgh := checkgrp.New(cfg.Build, cfg.DB)
+	cgh := checkgrp.New(cfg.Build, cfg.DB, cfg.Log)
 
 	app.Handle(http.MethodGet, version, "/readiness", cgh.Readiness)
 	app.Handle(http.MethodGet, version, "/liveness", cgh.Liveness)

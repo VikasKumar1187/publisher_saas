@@ -80,7 +80,6 @@ func APIMux(cfg APIMuxConfig, options ...func(opts *Options)) http.Handler {
 			mid.Errors(cfg.Log),
 			mid.Metrics(),
 			mid.Panics(),
-			mid.ResponseWriter(cfg.Log),
 		)
 	}
 

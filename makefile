@@ -297,10 +297,10 @@ list:
 # Class Stuff
 
 run:
-	cd $(PUBLISHER_DIR) && go run cmd/publisher-api/main.go | go run cmd/tooling/logfmt/main.go
+	cd $(PUBLISHER_DIR) && go run app/services/publisher-api/main.go | go run app/tooling/logfmt/main.go
 
 run-help:
-	cd $(PUBLISHER_DIR) && go run cmd/publisher-api/main.go --help | go run cmd/tooling/logfmt/main.go
+	cd $(PUBLISHER_DIR) && go run app/services/publisher-api/main.go | go run app/tooling/logfmt/main.go
 
 curl:
 	curl -il http://localhost:3000/v1/test

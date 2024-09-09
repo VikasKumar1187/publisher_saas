@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/vikaskumar1187/publisher_saas/foundation/web"
 )
 
 // Cors sets the response headers needed for Cross-Origin Resource Sharing

@@ -292,7 +292,7 @@ list:
 # Class Stuff
 
 run:
-	cd $(PUBLISHER_DIR) && go run app/services/publisher-api/main.go | go run app/tooling/logfmt/main.go
+	go run app/services/publisher-api/main.go | go run app/tooling/logfmt/main.go
 
 run-help:
 	cd $(PUBLISHER_DIR) && go run app/services/publisher-api/main.go | go run app/tooling/logfmt/main.go

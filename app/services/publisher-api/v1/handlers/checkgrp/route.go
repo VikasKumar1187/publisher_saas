@@ -5,8 +5,7 @@ import (
 
 	"github.com/ServiceWeaver/weaver"
 	"github.com/jmoiron/sqlx"
-	"github.com/vikaskumar1187/publisher_saas/foundation/logger"
-	"github.com/vikaskumar1187/publisher_saas/foundation/web"
+
 )
 
 // Config contains all the mandatory systems required by handlers.

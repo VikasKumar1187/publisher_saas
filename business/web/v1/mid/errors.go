@@ -4,11 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/vikaskumar1187/publisher_saas/business/web/v1/auth"
-	"github.com/vikaskumar1187/publisher_saas/business/web/v1/response"
-	"github.com/vikaskumar1187/publisher_saas/foundation/logger"
-	"github.com/vikaskumar1187/publisher_saas/foundation/validate"
-	"github.com/vikaskumar1187/publisher_saas/foundation/web"
+
 )
 
 // Errors handles errors coming out of the call chain. It detects normal

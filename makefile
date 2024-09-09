@@ -70,7 +70,7 @@ all: service
 
 service:
 	docker build \
-		-f infra/docker/dockerfile.service \
+		-f zarf/docker/dockerfile.service \
 		-t $(SERVICE_IMAGE) \
 		--build-arg BUILD_REF=$(VERSION) \
 		--build-arg BUILD_DATE="$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")" \
@@ -83,7 +83,7 @@ dev-up:
 	kind create cluster \
 		--image $(KIND) \
 		--name $(KIND_CLUSTER) \
-		--config infra/k8s/dev/kind-config.yaml
+		--config zarf/k8s/dev/kind-config.yaml
 
 	kubectl wait --timeout=120s --namespace=local-path-storage --for=condition=Available deployment/local-path-provisioner
 
@@ -99,29 +99,29 @@ dev-down:
 #==============================================================================
 
 dev-load:
-	cd infra/k8s/dev/publisher; kustomize edit set image service-image=$(SERVICE_IMAGE)
+	cd zarf/k8s/dev/publisher; kustomize edit set image service-image=$(SERVICE_IMAGE)
 	kind load docker-image $(SERVICE_IMAGE) --name $(KIND_CLUSTER)
 
 dev-apply:
-	kustomize build infra/k8s/dev/database | kubectl apply -f -
+	kustomize build zarf/k8s/dev/database | kubectl apply -f -
 	kubectl rollout status --namespace=$(NAMESPACE) --watch --timeout=120s sts/database
 
-	kustomize build infra/k8s/dev/grafana | kubectl apply -f -
+	kustomize build zarf/k8s/dev/grafana | kubectl apply -f -
 	kubectl wait pods --namespace=$(NAMESPACE) --selector app=grafana --timeout=120s --for=condition=Ready
 
-	kustomize build infra/k8s/dev/prometheus | kubectl apply -f -
+	kustomize build zarf/k8s/dev/prometheus | kubectl apply -f -
 	kubectl wait pods --namespace=$(NAMESPACE) --selector app=prometheus --timeout=120s --for=condition=Ready
 
-	kustomize build infra/k8s/dev/tempo | kubectl apply -f -
+	kustomize build zarf/k8s/dev/tempo | kubectl apply -f -
 	kubectl wait pods --namespace=$(NAMESPACE) --selector app=tempo --timeout=120s --for=condition=Ready
 
-	kustomize build infra/k8s/dev/loki | kubectl apply -f -
+	kustomize build zarf/k8s/dev/loki | kubectl apply -f -
 	kubectl wait pods --namespace=$(NAMESPACE) --selector app=loki --timeout=120s --for=condition=Ready
 
-	kustomize build infra/k8s/dev/promtail | kubectl apply -f -
+	kustomize build zarf/k8s/dev/promtail | kubectl apply -f -
 	kubectl wait pods --namespace=$(NAMESPACE) --selector app=promtail --timeout=120s --for=condition=Ready
 
-	kustomize build infra/k8s/dev/publisher | kubectl apply -f -
+	kustomize build zarf/k8s/dev/publisher | kubectl apply -f -
 	kubectl wait pods --namespace=$(NAMESPACE) --selector app=$(APP) --timeout=120s --for=condition=Ready
 
 dev-restart:
@@ -134,7 +134,7 @@ dev-update-apply: all dev-load dev-apply
 # ===================================================================================
 
 dev-logs:
-	kubectl logs --namespace=$(NAMESPACE) -l app=$(APP) --all-containers=true -f --tail=100 --max-log-requests=6 | cd $(PUBLISHER_DIR) && go run cmd/tooling/logfmt/main.go -service=$(SERVICE_NAME)
+	kubectl logs --namespace=$(NAMESPACE) -l app=$(APP) --all-containers=true -f --tail=100 --max-log-requests=6 | go run app/tooling/logfmt/main.go -service=$(SERVICE_NAME)
 
 dev-logs-init:
 	kubectl logs --namespace=$(NAMESPACE) -l app=$(APP) -f --tail=100 -c init-migrate
@@ -176,12 +176,12 @@ dev-logs-promtail:
 # ------------------------------------------------------------------------------
 
 dev-services-delete:
-	kustomize build infra/k8s/dev/publisher | kubectl delete -f -
-	kustomize build infra/k8s/dev/grafana | kubectl delete -f -
-	kustomize build infra/k8s/dev/tempo | kubectl delete -f -
-	kustomize build infra/k8s/dev/loki | kubectl delete -f -
-	kustomize build infra/k8s/dev/promtail | kubectl delete -f -
-	kustomize build infra/k8s/dev/database | kubectl delete -f -
+	kustomize build zarf/k8s/dev/publisher | kubectl delete -f -
+	kustomize build zarf/k8s/dev/grafana | kubectl delete -f -
+	kustomize build zarf/k8s/dev/tempo | kubectl delete -f -
+	kustomize build zarf/k8s/dev/loki | kubectl delete -f -
+	kustomize build zarf/k8s/dev/promtail | kubectl delete -f -
+	kustomize build zarf/k8s/dev/database | kubectl delete -f -
 
 dev-describe-replicaset:
 	kubectl get rs
@@ -203,10 +203,10 @@ dev-database-restart:
 # Administration
 
 migrate:
-	cd $(PUBLISHER_DIR) && go run cmd/tooling/publisher-admin/main.go migrate
+	cd $(PUBLISHER_DIR) && go run app/tooling/publisher-admin/main.go migrate
 
 seed: migrate
-	cd $(PUBLISHER_DIR) && go run cmd/tooling/publisher-admin/main.go seed
+	cd $(PUBLISHER_DIR) && go run app/tooling/publisher-admin/main.go seed
 
 pgcli:
 	pgcli postgresql://postgres:postgres@localhost
@@ -252,10 +252,10 @@ test-race: test-race lint vuln-check
 # make docs ARGS="-out json"
 # make docs ARGS="-out html"
 docs:
-	cd $(PUBLISHER_DIR) && go run cmd/tooling/docs/main.go --browser $(ARGS)
+	cd $(PUBLISHER_DIR) && go run app/tooling/docs/main.go --browser $(ARGS)
 
 docs-debug:
-	cd $(PUBLISHER_DIR) && go run cmd/tooling/docs/main.go $(ARGS)
+	cd $(PUBLISHER_DIR) && go run app/tooling/docs/main.go $(ARGS)
 
 # ==============================================================================
 # Hitting endpoints
@@ -341,7 +341,7 @@ wea-dev-down:
 # ------------------------------------------------------------------------------
 
 wea-dev-apply:
-	kustomize build infra/k8s/dev/database | kubectl --context=kind-$(KIND_CLUSTER) apply -f -
+	kustomize build zarf/k8s/dev/database | kubectl --context=kind-$(KIND_CLUSTER) apply -f -
 	kubectl rollout status --context=kind-$(KIND_CLUSTER) --namespace=$(NAMESPACE) --watch --timeout=120s sts/database
 
 	cd services/publisher/app/weaver/publisher-api; GOOS=linux GOARCH=amd64 go build .

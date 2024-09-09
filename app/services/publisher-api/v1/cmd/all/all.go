@@ -2,9 +2,9 @@
 package all
 
 import (
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/app/services/publisher-api/v1/handlers/checkgrp"
-	v1 "github.com/vikaskumar1187/publisher_saas/services/publisher/business/web/v1"
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/foundation/web"
+	"github.com/vikaskumar1187/publisher_saas/app/services/publisher-api/v1/handlers/checkgrp"
+	v1 "github.com/vikaskumar1187/publisher_saas/business/web/v1"
+	"github.com/vikaskumar1187/publisher_saas/foundation/web"
 )
 
 // Routes constructs the add value which provides the implementation of

@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/app/services/publisher-api/v1/cmd"
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/app/services/publisher-api/v1/cmd/all"
+	"github.com/vikaskumar1187/publisher_saas/app/services/publisher-api/v1/cmd"
+	"github.com/vikaskumar1187/publisher_saas/app/services/publisher-api/v1/cmd/all"
 )
 
 /*

@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/business/data/transaction"
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/foundation/logger"
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/foundation/web"
+	"github.com/vikaskumar1187/publisher_saas/business/data/transaction"
+	"github.com/vikaskumar1187/publisher_saas/foundation/logger"
+	"github.com/vikaskumar1187/publisher_saas/foundation/web"
 )
 
 // ExecuteInTransation starts a transaction around all the storage calls within

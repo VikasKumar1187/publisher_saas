@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/business/data/transaction"
+	"github.com/vikaskumar1187/publisher_saas/business/data/transaction"
 )
 
 // dbBeginner implements the core coreTransaction interface,

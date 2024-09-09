@@ -26,8 +26,6 @@ SERVICE_NAME    := publisher-api
 VERSION         := 0.0.1
 SERVICE_IMAGE   := $(BASE_IMAGE_NAME)/$(SERVICE_NAME):$(VERSION)
 
-# Define the path to the publisher service
-PUBLISHER_DIR   := services/publisher
 
 # ==============================================================================
 # Install Tooling and Dependencies
@@ -76,7 +74,7 @@ service:
 		-t $(SERVICE_IMAGE) \
 		--build-arg BUILD_REF=$(VERSION) \
 		--build-arg BUILD_DATE="$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")" \
-		./$(PUBLISHER_DIR)
+		.
 
 #==============================================================================
 # Running from within k8s/kind

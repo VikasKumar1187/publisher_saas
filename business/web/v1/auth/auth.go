@@ -11,7 +11,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/navigacontentlab/panurge/navigaid"
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/foundation/logger"
+	"github.com/vikaskumar1187/publisher_saas/foundation/logger"
 )
 
 // Config represents information required to initialize auth.

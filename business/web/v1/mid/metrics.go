@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/business/web/v1/metrics"
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/foundation/web"
+	"github.com/vikaskumar1187/publisher_saas/business/web/v1/metrics"
+	"github.com/vikaskumar1187/publisher_saas/foundation/web"
 )
 
 // Metrics updates program counters.

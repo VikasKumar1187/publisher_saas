@@ -6,10 +6,10 @@ import (
 	"os"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/business/web/v1/auth"
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/business/web/v1/mid"
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/foundation/logger"
-	"github.com/vikaskumar1187/publisher_saas/services/publisher/foundation/web"
+	"github.com/vikaskumar1187/publisher_saas/business/web/v1/auth"
+	"github.com/vikaskumar1187/publisher_saas/business/web/v1/mid"
+	"github.com/vikaskumar1187/publisher_saas/foundation/logger"
+	"github.com/vikaskumar1187/publisher_saas/foundation/web"
 	"go.opentelemetry.io/otel/trace"
 )
 

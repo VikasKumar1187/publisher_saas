@@ -175,9 +175,6 @@ dev-logs-loki:
 dev-logs-promtail:
 	kubectl logs --namespace=$(NAMESPACE) -l app=promtail --all-containers=true -f --tail=100
 
-pgcli:
-	pgcli postgresql://postgres:postgres@localhost
-
 # ------------------------------------------------------------------------------
 
 dev-services-delete:

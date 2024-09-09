@@ -5,6 +5,8 @@ import (
 	"log"
 
 	"github.com/ServiceWeaver/weaver"
+	"github.com/vikaskumar1187/publisher_saas/app/services/publisher-api/v1/cmd"
+	"github.com/vikaskumar1187/publisher_saas/app/services/publisher-api/v1/cmd/all"
 )
 
 /*

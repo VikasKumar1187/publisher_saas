@@ -41,6 +41,6 @@ CMD ["./publisher-api"]
 LABEL org.opencontainers.image.created="${BUILD_DATE}" \
     org.opencontainers.image.title="publisher-api" \
     org.opencontainers.image.authors="Vikas Kumar" \
-    org.opencontainers.image.source="https://github.com/VikasKumar1187/print_auto_service/tree/master/app/services/publisher-api" \
+    org.opencontainers.image.source="https://github.com/vikaskumar1187/print_auto_service/tree/master/app/services/publisher-api" \
     org.opencontainers.image.revision="${BUILD_REF}" \
     org.opencontainers.image.vendor="Self"

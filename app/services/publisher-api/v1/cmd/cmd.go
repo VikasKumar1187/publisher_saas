@@ -16,7 +16,6 @@ import (
 
 	"github.com/ardanlabs/conf/v3"
 
-
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
@@ -24,6 +23,13 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
+
+	db "github.com/vikaskumar1187/publisher_saas/business/data/dbsql/pgx"
+	v1 "github.com/vikaskumar1187/publisher_saas/business/web/v1"
+	"github.com/vikaskumar1187/publisher_saas/business/web/v1/auth"
+	"github.com/vikaskumar1187/publisher_saas/business/web/v1/debug"
+	"github.com/vikaskumar1187/publisher_saas/foundation/logger"
+	"github.com/vikaskumar1187/publisher_saas/foundation/web"
 )
 
 // Main is the entry point for the running instance.
